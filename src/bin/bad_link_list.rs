@@ -1,5 +1,5 @@
 
-use std::mem;
+use std::{mem, ops::Deref};
 
 pub struct List {
     head: Link,
@@ -88,6 +88,46 @@ impl Iterator for IntoIter {
 }
 
 
+pub struct Iter<'a> {
+    next: Option<&'a Node>,
+}
+
+impl List {
+    pub fn iter<'a>(&'a self) -> Iter<'a> {
+        let next = match &self.head {
+            Link::Empty => None,
+            Link::More(node) => Some(node.deref()),
+        };
+        Iter { next }
+    }
+}
+
+impl List {
+    pub fn iter2(&self) -> Iter {
+        let next = match &self.head {
+            Link::Empty => None,
+            Link::More(node) => Some(node.deref()),
+        };
+        Iter { next }
+    }
+}
+
+impl<'a> Iterator for Iter<'a> {
+    type Item = &'a i32;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        self.next.map(|node| {
+            let next = match &node.next {
+                Link::Empty => None,
+                Link::More(local_node) => Some(local_node.deref()),
+            };
+            self.next = next;
+            &node.elem
+        })
+    }
+}
+
+
 #[cfg(test)]
 mod test {
     use super::List;
@@ -121,7 +161,7 @@ mod test {
         assert_eq!(list.pop(), None);
     }
 
-    
+
     #[test]
     fn peek() {
         let mut list = List::new();
@@ -151,9 +191,21 @@ mod test {
         assert_eq!(iter.next(), Some(1));
         assert_eq!(iter.next(), None);
     }
+
+    #[test]
+    fn iter() {
+        let mut list = List::new();
+        list.push(1); list.push(2); list.push(3);
+
+        let mut iter = list.iter();
+        assert_eq!(iter.next(), Some(&3));
+        assert_eq!(iter.next(), Some(&2));
+        assert_eq!(iter.next(), Some(&1));
+    }
+
 }
 
-fn main ()
+fn main()
 {
     
 }
