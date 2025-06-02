@@ -29,4 +29,20 @@ fn main() {
         *pointer_b
     };
     println!("I swear this is a pie! {}", b);
+
+    
+    let mut num = 42;
+    
+    // Create raw pointers (safe operation)
+    let ptr_imm: *const i32 = &num as *const i32;
+    let ptr_mut: *mut i32 = &mut num as *mut i32;
+
+    unsafe {
+        // Dereference raw pointers (requires unsafe)
+        println!("Mutated: {}", *ptr_mut);
+        println!("Immutable: {}", *ptr_imm);
+        *ptr_mut = 100;
+        println!("Mutated: {}", *ptr_mut);
+        println!("Immutable: {}", *ptr_imm);
+    }
 }
