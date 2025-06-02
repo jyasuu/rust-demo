@@ -81,4 +81,23 @@ fn main() {
             println!("Element {}: {}", i, elem);
         }
     }
+
+    
+    // Allocate memory on heap
+    let layout = std::alloc::Layout::new::<i32>();
+    let ptr: *mut i32 = unsafe { std::alloc::alloc(layout) } as *mut i32;
+
+    if !ptr.is_null() {
+        unsafe {
+            println!("Heap value: {}", *ptr);
+            // Initialize memory
+            *ptr = 1234;
+            println!("Heap value: {}", *ptr);
+            
+            // Deallocate memory
+            std::alloc::dealloc(ptr as *mut u8, layout);
+
+            println!("Heap value: {}", *ptr); // value is chaos
+        }
+    }
 }
