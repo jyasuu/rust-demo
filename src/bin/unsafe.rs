@@ -68,4 +68,17 @@ fn main() {
         }
     }
     println!("Doubled: {}", data);
+
+
+    
+    let arr = [10, 20, 30, 40];
+    let ptr: *const i32 = arr.as_ptr();
+
+    unsafe {
+        // Access array elements through pointer arithmetic
+        for i in 0..arr.len() {
+            let elem: i32 = *ptr.add(i); // Equivalent to ptr.offset(i as isize)
+            println!("Element {}: {}", i, elem);
+        }
+    }
 }
