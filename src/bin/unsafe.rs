@@ -1,5 +1,12 @@
 use std::slice;
 
+
+extern "C" {
+    // Declare external C function
+    fn abs(input: i32) -> i32;
+}
+
+
 fn main() {
     let some_vector = vec![1, 2, 3, 4];
 
@@ -99,5 +106,11 @@ fn main() {
 
             println!("Heap value: {}", *ptr); // value is chaos
         }
+
     }
+
+    
+        let value = -42;
+        let result = unsafe { abs(value) }; // Safe wrapper recommended in real code
+        println!("C abs({}) = {}", value, result);
 }
