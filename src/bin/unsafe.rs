@@ -45,4 +45,27 @@ fn main() {
         println!("Mutated: {}", *ptr_mut);
         println!("Immutable: {}", *ptr_imm);
     }
+
+    
+    let mut data = 10;
+    let mut ptr: *mut i32 = &mut data;
+    
+    // Valid pointer access
+    unsafe {
+        *ptr *= 2;
+    }
+    println!("Doubled: {}", data);
+
+    // Set to null pointer
+    ptr = std::ptr::null_mut();
+    
+    unsafe {
+        // Safe null check before dereference
+        if !ptr.is_null() {
+            *ptr = 100; // Would crash without check
+        } else {
+            println!("Pointer is null!");
+        }
+    }
+    println!("Doubled: {}", data);
 }
