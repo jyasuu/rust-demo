@@ -40,10 +40,18 @@ impl Logistics for SeaLogistics {
     }
 }
 
+fn plan_delivery(logistics: Box<dyn Logistics>)
+{
+    logistics.plan_delivery();
+}
+
 fn main() {
+    let logistics = Box::new(RoadLogistics);
+    plan_delivery(logistics);
+    
     let road_logistics = RoadLogistics;
-    road_logistics.plan_delivery();
+    plan_delivery(Box::new(road_logistics));
 
     let sea_logistics = SeaLogistics;
-    sea_logistics.plan_delivery();
+    plan_delivery(Box::new(sea_logistics));
 }
