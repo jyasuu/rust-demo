@@ -3,6 +3,8 @@
 extern "C" {
     fn print_from_c();
 }
+mod lib;
+use lib as rlib;
 
 fn main() {
     println!("Hello from Rust!");
@@ -10,4 +12,6 @@ fn main() {
     unsafe {
         print_from_c();  // Call C function
     }
+
+    rlib::use_generated();
 }

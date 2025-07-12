@@ -6,6 +6,7 @@ build = "build.rs"  # Specifies our build script
 
 [build-dependencies]
 cc = "1.0"  # C compiler helper crate
+serde_json = "1.0"  # For parsing JSON configs
 
 [dependencies]
 libc = "0.2"  # For C type bindings

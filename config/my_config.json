@@ -1,0 +1,6 @@
+{
+  "endpoints": [
+    { "name": "get_data", "path": "/api/data" },
+    { "name": "send_data", "path": "/api/send" }
+  ]
+}
