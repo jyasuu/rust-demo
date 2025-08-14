@@ -4,9 +4,11 @@ fn main() {
     thread::spawn(f);
     thread::spawn(f);
     
-    thread::sleep(std::time::Duration::from_millis(100));
+    // thread::sleep(std::time::Duration::from_millis(100));
 
     println!("Hello from the main thread.");
+    t1.join().unwrap();
+    t2.join().unwrap();
 }
 
 fn f() {
