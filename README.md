@@ -44,3 +44,6 @@ wget https://github.com/exercism/cli/releases/download/v3.5.5/exercism-3.5.5-lin
 tar -xf exercism-3.5.5-linux-x86_64.tar.gz
 
 exercism download --track=rust --exercise=reverse-string
+
+
+https://marabos.nl/atomics/
