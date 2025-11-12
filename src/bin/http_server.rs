@@ -1,9 +1,8 @@
 use std::collections::HashMap;
 use std::io::{Read, Write};
 use std::net::{TcpListener, TcpStream};
-use std::sync::{Arc, Mutex};
+use std::sync::{Arc, Mutex, atomic::{AtomicBool, Ordering}};
 use std::thread;
-use std::time::SystemTime;
 
 type Headers = HashMap<String, String>;
 
@@ -377,7 +376,13 @@ fn main() {
     let listener = TcpListener::bind("127.0.0.1:3000")
         .expect("Failed to bind to port 3000");
 
+    listener.set_nonblocking(true)
+        .expect("Failed to set nonblocking");
+
+    let active_connections = Arc::new(Mutex::new(0usize));
+
     println!("Server listening on http://127.0.0.1:3000");
+    println!("Press Ctrl+C to stop server\n");
     println!("Available endpoints:");
     println!("  GET  /get");
     println!("  POST /post");
@@ -389,17 +394,34 @@ fn main() {
     println!("  GET  /delay?seconds=N");
     println!("  GET  /status?code=N");
     println!("  GET  /json");
-    println!("  POST /json");
+    println!("  POST /json\n");
 
-    for stream in listener.incoming() {
-        match stream {
-            Ok(stream) => {
-                thread::spawn(|| {
+    loop {
+        // Try to accept a connection (non-blocking)
+        match listener.accept() {
+            Ok((stream, _addr)) => {
+                let active = active_connections.clone();
+
+                // Increment active connections
+                if let Ok(mut conn) = active.lock() {
+                    *conn += 1;
+                }
+
+                thread::spawn(move || {
                     handle_connection(stream);
+
+                    // Decrement active connections
+                    if let Ok(mut conn) = active.lock() {
+                        *conn = conn.saturating_sub(1);
+                    }
                 });
             }
+            Err(e) if e.kind() == std::io::ErrorKind::WouldBlock => {
+                // No connection available, sleep briefly
+                thread::sleep(std::time::Duration::from_millis(10));
+            }
             Err(e) => {
-                eprintln!("Connection error: {}", e);
+                eprintln!("[ERROR] Connection error: {}", e);
             }
         }
     }
